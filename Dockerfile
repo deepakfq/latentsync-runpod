@@ -51,7 +51,12 @@ RUN pip3 install \
     numpy==1.26.4 \
     scipy==1.13.1 \
     decord==0.6.0 \
-    kornia==0.7.3
+    kornia==0.7.3 \
+    insightface==0.7.3 \
+    onnxruntime-gpu==1.19.2 \
+    face-alignment==1.4.1 \
+    ninja==1.11.1.1 \
+    gradio==5.9.1
 
 # RunPod SDK
 RUN pip3 install runpod requests
