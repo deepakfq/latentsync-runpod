@@ -6,11 +6,12 @@ ENV HF_HOME=/root/.cache/huggingface
 ENV TORCH_HOME=/root/.cache/torch
 ENV PIP_NO_CACHE_DIR=1
 
-# System deps (slim)
+# System deps (includes build-essential for insightface C++ extension)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.10 python3-pip python3.10-dev \
     git ffmpeg libsm6 libxext6 libgl1 libglib2.0-0 \
     curl wget ca-certificates \
+    build-essential g++ gcc \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
@@ -29,6 +30,9 @@ WORKDIR /opt
 RUN git clone --depth 1 https://github.com/bytedance/LatentSync.git
 
 WORKDIR /opt/LatentSync
+
+# Install numpy + cython FIRST so insightface can build its C++ extension
+RUN pip3 install numpy==1.26.4 cython==3.0.11
 
 # LatentSync deps
 RUN pip3 install \
