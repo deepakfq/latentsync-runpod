@@ -60,7 +60,8 @@ RUN pip3 install \
     onnxruntime-gpu==1.19.2 \
     face-alignment==1.4.1 \
     ninja==1.11.1.1 \
-    gradio==5.9.1
+    gradio==5.9.1 \
+    DeepCache==0.1.1
 
 # RunPod SDK
 RUN pip3 install runpod requests
