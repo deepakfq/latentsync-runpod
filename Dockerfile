@@ -63,17 +63,29 @@ RUN pip3 install \
     gradio==5.9.1 \
     DeepCache==0.1.1
 
-# RunPod SDK
-RUN pip3 install runpod requests
+# RunPod SDK + boto3 for R2 upload
+RUN pip3 install runpod requests boto3
 
 # Download LatentSync 1.6 models at build (~5GB)
-# Using HF_TOKEN if needed for gated models
 RUN python3 -c "\
 from huggingface_hub import snapshot_download; \
 snapshot_download(repo_id='ByteDance/LatentSync-1.6', \
     local_dir='/opt/LatentSync/checkpoints', \
     local_dir_use_symlinks=False, \
     max_workers=4)"
+
+# Pre-warm insightface's buffalo_l model pack (downloads on first use otherwise)
+RUN python3 -c "\
+import insightface; \
+app = insightface.app.FaceAnalysis(name='buffalo_l', providers=['CPUExecutionProvider']); \
+app.prepare(ctx_id=0, det_size=(640, 640)); \
+print('insightface buffalo_l cached')" || true
+
+# Pre-warm face-alignment
+RUN python3 -c "\
+import face_alignment; \
+fa = face_alignment.FaceAlignment(face_alignment.LandmarksType.TWO_D, device='cpu'); \
+print('face_alignment cached')" || true
 
 COPY handler.py /opt/LatentSync/handler.py
 
